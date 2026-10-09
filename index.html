@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080c19">
+<title>NAVJ AI SÉCURITÉ</title>
+<style>
+:root{--bg:#080c19;--card:#121c33;--line:#1f2d4d;--cyan:#2ec4ff;--gold:#f7c948;--text:#eef3ff;--muted:#8da0c0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:#080c19;color:var(--text);line-height:1.5}
+.top{position:sticky;top:0;z-index:20;background:rgba(8,12,25,.95);border-bottom:1px solid var(--line);padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:48px;height:48px;border-radius:12px;background:#0e1a33;border:1px solid var(--line);display:grid;place-items:center}
+.wrap{max-width:540px;margin:0 auto;padding:14px 14px 90px}
+.hero{background:linear-gradient(180deg,#121c33,#0e152a);border:1px solid var(--line);border-radius:20px;padding:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#121c33;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+.label{font-size:10px;letter-spacing:1px;font-weight:800;color:var(--muted);text-transform:uppercase;margin:10px 0 6px;display:block}
+.input,.textarea{width:100%;background:#0b1328;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:12px;font-size:14px}
+.textarea{min-height:120px}
+.btn{width:100%;border:0;border-radius:14px;padding:14px;font-weight:800;cursor:pointer;display:flex;justify-content:center;gap:6px}
+.btn-cyan{background:linear-gradient(90deg,#2ec4ff,#7adfff);color:#00101a}
+.btn-gold{background:linear-gradient(90deg,#f7c948,#ffe89a);color:#2a1f00}
+.btn-line{background:transparent;border:1px solid var(--line);color:var(--text)}
+.badge{padding:4px 10px;border-radius:99px;border:1px solid var(--line);font-size:10px;font-weight:800}
+.ref{background:#0a1226;color:var(--gold)}
+.clockBox{background:#0a1226;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.alert{border:1px solid #5a4a18;background:#211d00;color:#ffeaa0;padding:10px;border-radius:14px;font-size:12px;margin-top:10px}
+.mic{width:88px;height:88px;border-radius:50%;border:0;background:radial-gradient(circle at 30% 30%,#ff6b6b,#9e0000);color:white;margin:12px auto;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mic.on{background:radial-gradient(circle at 30% 30%,#63ffa1,#0a7a2d)}
+.list{background:#0b1328;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="top"><div class="brand"><div class="logo"><svg width="30" height="30" viewBox="0 0 100 100"><path d="M50 10 L80 21 L80 56 C80 73 66 88 50 94 C34 88 20 73 20 56 L20 21 Z" fill="#0e1d3a" stroke="#2ec4ff" stroke-width="2"/><path d="M32 38 V62 H38 V48 L52 62 H58 V38 H52 V52 L38 38 Z" fill="white"/></svg></div><div><div style="font-weight:800">NAVJ AI <span style="color:#2ec4ff">SÉCURITÉ</span></div><div style="font-size:9px;color:#8da0c0">SECURITY GUARD</div></div></div><span class="badge ref" id="refB">GRATUIT</span></div>
+<div class="wrap">
+<div class="hero"><h2>🛡️ Assistant intelligent pour agents</h2><p style="font-size:13px;color:#8da0c0;margin-top:6px">Rapport vocal, PDF, WhatsApp, rondes. 100% local.</p><div class="grid2" style="margin-top:12px"><div class="clockBox"><div style="font-size:10px;color:#8da0c0">HEURE LOCALE</div><div id="clkLocal" style="font-size:20px;font-weight:800">--:--:--</div><div id="dateLocal" style="font-size:11px;color:#8da0c0"></div></div><div class="clockBox"><div style="font-size:10px;color:#8da0c0">ABIDJAN</div><div id="clkAbj" style="font-weight:800">--:--</div></div></div></div>
+<div class="card"><h3>📋 Rapport d'incident</h3><label class="label">Décris les faits observés</label><textarea id="rapport" class="textarea" placeholder="Ex: À 22h porte arrière ouverte..."></textarea>
+<div class="card" style="background:#0a1226;border-style:dashed"><h3>🎙️ Aide vocale</h3><button class="mic" id="micBtn" onclick="parler()">🎤<span style="font-size:11px">Parler</span></button><div style="text-align:center;font-size:12px;color:#8da0c0" id="micInfo">Appuyer pour parler</div><div class="grid2" style="margin-top:8px"><button class="btn btn-line" onclick="ecouter()">🔊 Réécouter</button><button class="btn btn-line" onclick="corriger()">✍️ Corriger</button></div></div>
+<button class="btn btn-cyan" style="margin-top:10px" onclick="preparerRapport()">Préparer le rapport</button><div id="resultat" class="list" style="white-space:pre-wrap;min-height:60px;margin-top:10px">Résultat ici...</div>
+<div class="grid2" style="margin-top:10px"><button class="btn btn-gold" onclick="exporterPDF()">📄 Export PDF</button><button class="btn btn-line" style="background:#25D366;color:white;border:0" onclick="envoyerWhatsApp()">💬 WhatsApp</button></div></div>
+<div class="card"><h3>👤 Profil</h3><input id="f_agent" class="input" placeholder="Nom agent" style="margin-top:8px"><input id="f_soc" class="input" placeholder="Société" style="margin-top:8px"><input id="f_site" class="input" placeholder="Site / Client" style="margin-top:8px"><input id="f_wa" class="input" placeholder="WhatsApp +225..." style="margin-top:8px"><button class="btn btn-line" style="margin-top:8px" onclick="saveP()">💾 Enregistrer local</button></div>
+</div>
+<script>
+let ref="NAVJ-"+Date.now().toString().slice(-6);let rec=null,recOn=false;
+function tick(){let n=new Date();document.getElementById('clkLocal').textContent=n.toLocaleTimeString('fr-FR');document.getElementById('dateLocal').textContent=n.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});try{document.getElementById('clkAbj').textContent=n.toLocaleTimeString('fr-FR',{timeZone:'Africa/Abidjan',hour:'2-digit',minute:'2-digit'});}catch(e){}}setInterval(tick,1000);tick();
+function preparerRapport(){let t=document.getElementById('rapport').value;if(t.trim()===""){document.getElementById('resultat').innerText="Veuillez décrire les faits.";return;}document.getElementById('resultat').innerText="REF: "+ref+"\nDate: "+new Date().toLocaleString('fr-FR')+"\nSite: "+document.getElementById('f_site').value+"\nAgent: "+document.getElementById('f_agent').value+"\n\nFaits:\n"+t;}
+function parler(){if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){alert('Micro non supporté, écris manuellement');return;}if(!rec){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;rec=new SR();rec.lang='fr-FR';rec.onstart=()=>{recOn=true;document.getElementById('micBtn').classList.add('on');};rec.onend=()=>{recOn=false;document.getElementById('micBtn').classList.remove('on');};rec.onresult=e=>{document.getElementById('rapport').value+=" "+e.results[0][0].transcript;};}if(recOn)rec.stop();else rec.start();}
+function ecouter(){let t=document.getElementById('rapport').value;if(!t)return;let u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u);}
+function corriger(){let t=document.getElementById('rapport').value.trim();if(!t)return;t=t.charAt(0).toUpperCase()+t.slice(1);if(!/[.!?]$/.test(t))t+='.';document.getElementById('rapport').value=t;}
+function exporterPDF(){let c=document.getElementById('resultat').innerText;let w=window.open('','_blank');w.document.write('<pre style="font-family:Arial;padding:20px">'+c+'\n\nSignature: ______________</pre>');w.document.close();w.print();}
+function envoyerWhatsApp(){let num=document.getElementById('f_wa').value||prompt('Numéro WhatsApp +225...');if(!num)return;let txt=document.getElementById('resultat').innerText||document.getElementById('rapport').value;window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(txt.slice(0,1000)),'_blank');}
+function saveP(){let d={agent:document.getElementById('f_agent').value,soc:document.getElementById('f_soc').value,site:document.getElementById('f_site').value,wa:document.getElementById('f_wa').value};localStorage.setItem('navj_pro',JSON.stringify(d));alert('Enregistré localement');}
+</script>
+</body>
+</html>
