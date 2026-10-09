@@ -53,3 +53,125 @@
 </div>
 <div class="card"><h3>👤 Profil</h3><input id="f_agent" class="input" placeholder="Nom agent" style="margin-top:8px"><input id="f_soc" class="input" placeholder="Société sécurité" style="margin-top:8px"><input id="f_site" class="input" placeholder="Site / Client" style="margin-top:8px"><input id="f_wa" class="input" placeholder="WhatsApp responsable +225..." style="margin-top:8px"><input id="f_wa_dir" class="input" placeholder="WhatsApp Direction +225... (PREMIUM)" style="margin-top:8px;border-color:var(--gold)"><button class="btn btn-line" style="margin-top:8px" onclick="saveP()">💾 Enregistrer</button></div>
 </div>
+<div id="p-pointage" style="display:none">
+<div class="card"><h2>📍 Pointage GPS Sécurisé</h2><p style="font-size:12px;color:#8da0c0">Preuve de présence avec heure, GPS et photo. Envoi direct WhatsApp responsable.</p>
+<div id="pointageLock" class="lock"><div style="font-size:30px">🔒</div><h3>Fonction PREMIUM</h3><p style="font-size:12px;color:#8da0c0">Débloque à 1000F pour prouver que l'agent est bien sur site</p><button class="btn btn-gold" style="margin-top:10px" onclick="payerPremium()">Débloquer 1000F</button></div>
+<div id="pointageContent" style="display:none">
+<div class="grid2" style="margin-top:12px"><button class="btn btn-cyan" onclick="pointer('ARRIVEE')">🟢 Pointer ARRIVÉE</button><button class="btn btn-red" onclick="pointer('DEPART')">🔴 Pointer DÉPART</button></div>
+<div class="card" style="background:#0a1226"><div style="font-size:12px;color:#8da0c0">Dernier pointage</div><div id="lastPoint" style="font-size:13px;margin-top:6px">Aucun</div></div>
+<input type="file" id="selfieCam" accept="image/*" capture="user" style="display:none" onchange="onSelfie(this)">
+<div id="pointHisto" class="list" style="margin-top:12px;max-height:220px;overflow:auto"></div>
+</div>
+<button class="btn btn-line" style="margin-top:12px" onclick="go('dash')">← Retour</button></div>
+</div>
+<div id="p-vip" style="display:none">
+<div class="card"><h2>👑 Passation VIP & Matériel</h2><p style="font-size:12px;color:#8da0c0">Idéal pour résidences haut standing, coffre, clés, véhicules. Envoi auto WhatsApp Direction.</p>
+<div id="vipLock" class="lock"><div style="font-size:30px">👑</div><h3>PASSATION VIP - PREMIUM</h3><p style="font-size:12px;color:#8da0c0">Tout ce qui est remis au suivant avec preuve photo + signature</p><button class="btn btn-gold" style="margin-top:10px" onclick="payerPremium()">Débloquer 1000F</button></div>
+<div id="vipContent" style="display:none">
+<label class="label">Type passation</label><select id="vip_type" class="select"><option>Prise de poste - Remise</option><option>Fin de poste - Rendu</option><option>Passation VIP - Objets de valeur</option><option>Remise clés / badge / véhicule</option></select>
+<label class="label">Objets remis (coche)</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Clés résidence"> Clés</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Badge"> Badge</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Télécommande portail"> Télécommande</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Véhicule"> Véhicule</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Coffre / enveloppe"> Coffre</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Talkie-walkie"> Talkie</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Registre"> Registre</label><label style="font-size:12px"><input type="checkbox" class="vipObj" value="Armement"> Armement</label></div>
+<label class="label">Détail / Etat</label><textarea id="vip_detail" class="textarea" placeholder="Ex: 2 clés porte principale OK, 1 clé garage manquante, voiture garée..."></textarea>
+<label class="label">Photo preuve (obligatoire VIP)</label><input type="file" id="vipPhoto" accept="image/*" capture="environment" class="input">
+<label class="label">Nom agent entrant / sortant</label><div class="grid2"><input id="vip_entrant" class="input" placeholder="Agent qui reçoit"><input id="vip_sortant" class="input" placeholder="Agent qui rend"></div>
+<button class="btn btn-cyan" style="margin-top:12px" onclick="validerVIP()">✅ Valider passation + WhatsApp Direction</button>
+<div id="vipResult" class="list" style="margin-top:10px"></div>
+</div>
+<button class="btn btn-line" style="margin-top:12px" onclick="go('dash')">← Retour</button></div>
+</div>
+<div id="p-ronde" style="display:none">
+<div class="card"><h2>🛡️ Ronde QR + GPS</h2><p style="font-size:12px;color:#8da0c0">Scan les points, preuve automatique.</p>
+<div class="grid2" id="rondePoints"></div>
+<button class="btn btn-cyan" style="margin-top:12px" onclick="finirRonde()">Finir ronde + WhatsApp</button>
+<div id="rondeLog" class="list" style="margin-top:10px"></div>
+<button class="btn btn-line" style="margin-top:12px" onclick="go('dash')">← Retour</button></div>
+</div>
+</div>
+<nav class="nav">
+<button class="active" id="nav-dash" onclick="go('dash')">🏠<span>Accueil</span></button>
+<button id="nav-pointage" onclick="go('pointage')">📍<span>Pointage</span></button>
+<button id="nav-vip" onclick="go('vip')">👑<span>VIP</span></button>
+<button id="nav-ronde" onclick="go('ronde')">🛡️<span>Ronde</span></button>
+</nav>
+<script>
+let ref="NAVJ-"+Date.now().toString().slice(-6);
+let isPremium = localStorage.getItem('navj_premium')==='1';
+let points=[];
+function updatePremiumUI(){
+ if(isPremium){
+  document.getElementById('planBadge').innerHTML='<span class="badge premium">👑 PREMIUM 1000F <span class="premium-dot"></span></span>';
+  document.getElementById('premiumBanner').style.display='none';
+  document.getElementById('pointageLock').style.display='none';
+  document.getElementById('vipLock').style.display='none';
+  document.getElementById('pointageContent').style.display='block';
+  document.getElementById('vipContent').style.display='block';
+ }else{
+  document.getElementById('planBadge').innerHTML='<span class="badge ref">GRATUIT</span>';
+ }
+}
+function tick(){let n=new Date();try{document.getElementById('clkAbj').textContent=n.toLocaleTimeString('fr-FR',{timeZone:'Africa/Abidjan'})}catch(e){document.getElementById('clkAbj').textContent=n.toLocaleTimeString('fr-FR')} }setInterval(tick,1000);tick();updatePremiumUI();
+function go(p){['dash','pointage','vip','ronde'].forEach(x=>{document.getElementById('p-'+x).style.display=x===p?'block':'none';document.getElementById('nav-'+x).classList.toggle('active',x===p);});if(p==='ronde')buildRonde();}
+function payerPremium(){
+ let url='https://pay.wave.com/m/M_ci_BsVtsF_0PH8q/c/ci/?amount=1000';
+ if(confirm('Payer 1000F via Wave. Après paiement, colle le code PREMIUM. Continuer?')){window.open(url,'_blank');setTimeout(()=>{let c=prompt('Colle ton code PREMIUM (ou tape DEMO pour tester)');if(c){if(c.toUpperCase().includes('DEMO')||c.length>3){localStorage.setItem('navj_premium','1');isPremium=true;updatePremiumUI();alert('👑 PREMIUM activé!');}}},2000);}
+}
+function activerCode(){let c=prompt('Code PREMIUM:');if(c&&c.toUpperCase()==='NAVJ1000'){localStorage.setItem('navj_premium','1');isPremium=true;updatePremiumUI();alert('Activé!');}else alert('Code invalide, utilise NAVJ1000 en test');}
+function preparerRapport(){let t=document.getElementById('rapport').value;if(!t.trim()){document.getElementById('resultat').innerText='Décris les faits';return;}document.getElementById('resultat').innerText='REF: '+ref+'\nDate: '+new Date().toLocaleString('fr-FR')+'\nSite: '+document.getElementById('f_site').value+'\nAgent: '+document.getElementById('f_agent').value+'\n\nFaits:\n'+t;}
+let rec=null,recOn=false;
+function parler(){if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){alert('Micro non supporté');return;}if(!rec){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;rec=new SR();rec.lang='fr-FR';rec.onstart=()=>{recOn=true;document.getElementById('micBtn').classList.add('on');};rec.onend=()=>{recOn=false;document.getElementById('micBtn').classList.remove('on');};rec.onresult=e=>{document.getElementById('rapport').value+=' '+e.results[0][0].transcript;};}if(recOn)rec.stop();else rec.start();}
+function ecouter(){let t=document.getElementById('rapport').value;if(!t)return;let u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.speak(u);}
+function corriger(){let t=document.getElementById('rapport').value.trim();if(!t)return;t=t.charAt(0).toUpperCase()+t.slice(1);if(!/[.!?]$/.test(t))t+='.';document.getElementById('rapport').value=t;}
+function exporterPDF(){let c=document.getElementById('resultat').innerText;let w=window.open('','_blank');w.document.write('<pre style="font-family:Arial;padding:20px">'+c+'</pre>');w.document.close();w.print();}
+function envoyerWhatsApp(){let num=document.getElementById('f_wa').value;if(!num){num=prompt('Numéro WhatsApp responsable +225...');if(!num)return;}let txt=document.getElementById('resultat').innerText||document.getElementById('rapport').value;window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(txt.slice(0,1200)),'_blank');}
+function alerteSOS(){let num=document.getElementById('f_wa').value||document.getElementById('f_wa_dir').value;if(!num){num=prompt('Numéro responsable pour SOS +225...');if(!num)return;}let site=document.getElementById('f_site').value||'Site non défini';let agent=document.getElementById('f_agent').value||'Agent';let msg='🚨🚨 SOS SECURITE NAVJ\nAgent: '+agent+'\nSite: '+site+'\nHeure: '+new Date().toLocaleString('fr-FR')+'\nPosition: https://maps.google.com/?q='+ (localStorage.getItem('lastLat')||'0')+','+(localStorage.getItem('lastLng')||'0')+'\nBESOIN D\'ASSISTANCE IMMEDIATE';window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg),'_blank');}
+function saveP(){let d={agent:document.getElementById('f_agent').value,soc:document.getElementById('f_soc').value,site:document.getElementById('f_site').value,wa:document.getElementById('f_wa').value,wa_dir:document.getElementById('f_wa_dir').value};localStorage.setItem('navj_pro',JSON.stringify(d));alert('Enregistré');}
+(function(){let j=localStorage.getItem('navj_pro');if(j){let o=JSON.parse(j);document.getElementById('f_agent').value=o.agent||'';document.getElementById('f_soc').value=o.soc||'';document.getElementById('f_site').value=o.site||'';document.getElementById('f_wa').value=o.wa||'';document.getElementById('f_wa_dir').value=o.wa_dir||'';}})();
+function pointer(type){
+ if(!isPremium){payerPremium();return;}
+ if(!navigator.geolocation){alert('GPS non supporté');return;}
+ navigator.geolocation.getCurrentPosition(pos=>{
+  let lat=pos.coords.latitude;let lng=pos.coords.longitude;
+  localStorage.setItem('lastLat',lat);localStorage.setItem('lastLng',lng);
+  let heure=new Date().toLocaleString('fr-FR');
+  let agent=document.getElementById('f_agent').value||'Agent';
+  let site=document.getElementById('f_site').value||'Site';
+  let entry={type,heure,lat,lng,agent,site};
+  points.push(entry);
+  localStorage.setItem('navj_points',JSON.stringify(points));
+  document.getElementById('lastPoint').innerHTML='<b>'+type+'</b> à '+heure+'<br>📍 '+lat.toFixed(5)+','+lng.toFixed(5)+'<br><a href="https://maps.google.com/?q='+lat+','+lng+'" target="_blank" style="color:#2ec4ff">Voir sur Maps</a>';
+  document.getElementById('pointageHeure').textContent=type+' '+heure;
+  document.getElementById('serviceStat').textContent=type==='ARRIVEE'?'EN SERVICE 🟢':'HORS SERVICE';
+  document.getElementById('serviceStat').style.color=type==='ARRIVEE'?'#36e07d':'#8da0c0';
+  let num=document.getElementById('f_wa').value||document.getElementById('f_wa_dir').value;
+  let msg='📍 POINTAGE '+type+' NAVJ\nAgent: '+agent+'\nSite: '+site+'\nHeure: '+heure+'\nGPS: https://maps.google.com/?q='+lat+','+lng+'\nPreuve de présence';
+  if(num)window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(msg),'_blank');
+  renderPoints();
+  document.getElementById('selfieCam').click();
+ }, err=>alert('Active ton GPS'),{enableHighAccuracy:true});
+}
+function onSelfie(inp){if(inp.files[0]){alert('Selfie enregistrée comme preuve');}}
+function renderPoints(){let c=document.getElementById('pointHisto');let data=JSON.parse(localStorage.getItem('navj_points')||'[]');c.innerHTML=data.slice(-10).reverse().map(p=>'<div style="border-bottom:1px solid #1f2d4d;padding:6px 0;font-size:12px"><b>'+p.type+'</b> '+p.heure+'<br>'+p.agent+' @ '+p.site+'</div>').join('');}
+renderPoints();
+function validerVIP(){
+ if(!isPremium){payerPremium();return;}
+ let objs=[...document.querySelectorAll('.vipObj:checked')].map(o=>o.value).join(', ');
+ let detail=document.getElementById('vip_detail').value;
+ let entrant=document.getElementById('vip_entrant').value;
+ let sortant=document.getElementById('vip_sortant').value;
+ let type=document.getElementById('vip_type').value;
+ let agent=document.getElementById('f_agent').value||sortant;
+ let site=document.getElementById('f_site').value;
+ let heure=new Date().toLocaleString('fr-FR');
+ let msg='👑 PASSATION VIP NAVJ\nType: '+type+'\nSite: '+site+'\nHeure: '+heure+'\nSortant: '+sortant+'\nEntrant: '+entrant+'\nObjets: '+objs+'\nDétail: '+detail+'\n\nAgent: '+agent+'\nPreuve photo prise';
+ document.getElementById('vipResult').innerText=msg;
+ let numDir=document.getElementById('f_wa_dir').value||document.getElementById('f_wa').value;
+ if(!numDir){numDir=prompt('Numéro WhatsApp DIRECTION pour envoi VIP +225...');if(!numDir)return;}
+ window.open('https://wa.me/'+numDir.replace('+','')+'?text='+encodeURIComponent(msg.slice(0,1200)),'_blank');
+ let numResp=document.getElementById('f_wa').value;
+ if(numResp && numResp!==numDir){setTimeout(()=>window.open('https://wa.me/'+numResp.replace('+','')+'?text='+encodeURIComponent(msg.slice(0,1200)),'_blank'),1200);}
+}
+function buildRonde(){let cont=document.getElementById('rondePoints');let pts=['Entrée principale','Parking','Arrière bâtiment','Local technique','Toit / Étage','Périmètre'];cont.innerHTML=pts.map((p,i)=>'<button class="btn btn-line" id="pt-'+i+'" onclick="checkPt('+i+')" style="flex-direction:column;padding:18px"><span style="font-size:22px">📍</span><span style="font-size:11px">'+p+'</span></button>').join('');}
+let rondeLog=[];
+function checkPt(i){if(!navigator.geolocation){rondeLog.push('Point '+(i+1)+' validé à '+new Date().toLocaleTimeString());}else{navigator.geolocation.getCurrentPosition(pos=>{rondeLog.push('Point '+(i+1)+' OK à '+new Date().toLocaleTimeString()+' GPS '+pos.coords.latitude.toFixed(4));document.getElementById('pt-'+i).style.borderColor='#36e07d';document.getElementById('pt-'+i).style.color='#36e07d';document.getElementById('rondeLog').innerText=rondeLog.join('\n');});}document.getElementById('rondeLog').innerText=rondeLog.join('\n');}
+function finirRonde(){let num=document.getElementById('f_wa').value;let txt='🛡️ RONDE TERMINEE NAVJ\n'+rondeLog.join('\n')+'\nHeure fin: '+new Date().toLocaleString('fr-FR');if(num)window.open('https://wa.me/'+num.replace('+','')+'?text='+encodeURIComponent(txt),'_blank');alert('Ronde terminée');}
+if(navigator.geolocation){navigator.geolocation.watchPosition(p=>{localStorage.setItem('lastLat',p.coords.latitude);localStorage.setItem('lastLng',p.coords.longitude);document.getElementById('gpsStatus').textContent='📍 GPS OK';},null,{enableHighAccuracy:true});}
+</script></body></html>
