@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAVJ AI Sécurité</title>
+<style>
+:root{--bg:#07120d;--or:#F77F00;--vt:#009E60;--tx:#f4f1e8;--mu:#9db3a6}
+*{box-sizing:border-box}
+body{margin:auto;max-width:520px;font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx);padding:10px 10px 84px;background-image:radial-gradient(circle at 80% 0,#F77F0026,transparent 45%),radial-gradient(circle at 0 30%,#009E6030,transparent 50%);background-attachment:fixed}
+.c{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px;margin-top:12px}
+h1{font-size:19px;margin:0;line-height:1.2}
+h2{font-size:16px;margin:0 0 8px;border-left:4px solid var(--or);padding-left:8px}
+.mu{color:var(--mu);font-size:13px}
+input,select,textarea{width:100%;padding:12px;margin-top:8px;border-radius:10px;border:1px solid #2b4538;background:#0d1f17;color:#fff;font-size:15px}
+button{width:100%;margin-top:8px;padding:13px;border:0;border-radius:12px;font:inherit;font-weight:800;cursor:pointer}
+button:active{transform:scale(.98)}
+.or{background:linear-gradient(90deg,#F77F00,#ffb347);color:#1a0d00}.vt{background:var(--vt);color:#fff}.gr{background:#1c3329;color:#fff}.rg{background:#d93a1f;color:#fff}
+.l{display:flex;gap:8px}.l>*{flex:1}
+.top{display:flex;align-items:center;gap:8px;text-align:center}
+.top>div{flex:1}.top svg{width:78px;height:78px;flex:none}
+.badge{background:#000;color:#ffcc00;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:800}
+.vocal{border:2px dashed var(--vt);border-radius:12px;padding:12px;margin-top:10px}
+#rapport{background:#fff;color:#111;padding:14px;border-radius:10px;white-space:pre-wrap;min-height:70px;margin-top:8px;font-size:14px}
+.h{border-top:1px solid rgba(255,255,255,.1);padding:8px 0;font-size:13px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.h button{width:auto;margin:0;padding:6px 10px;font-size:12px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#050c09;border-top:2px solid var(--or);max-width:520px;margin:auto}
+nav button{margin:0;border-radius:0;background:none;color:var(--mu);font-size:11px;padding:10px 2px}
+nav button.on{color:var(--or);background:#0d1f17}
+.sec{display:none}.sec.on{display:block}
+.cl{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)}
+.big{font-size:38px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;color:var(--or)}
+.log{height:230px;overflow:auto;background:#0a1711;border-radius:10px;padding:8px;margin-top:8px}
+.m{max-width:88%;padding:8px 11px;border-radius:12px;margin:6px 0;font-size:14px;white-space:pre-wrap}
+.m.ia{background:#1c3329}.m.mo{background:var(--vt);margin-left:auto}
+.ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ch button{width:auto;margin:0;padding:6px 10px;font-size:12px;background:#143024;color:#cfe9db;border-radius:20px}
+#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:#000;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;border:1px solid var(--or);text-align:center;max-width:90%}
+#toast.on{opacity:1}
+.terre{animation:tourne 16s linear infinite}
+@keyframes tourne{to{transform:translateX(-200px)}}
+@media(prefers-reduced-motion:reduce){.terre{animation:none}}
+</style>
+</head>
+<body>
+
+<header class="c" style="border-color:var(--or)">
+  <div class="top">
+    <svg viewBox="0 0 190 200" aria-label="Carte de la Côte d'Ivoire">
+      <defs><clipPath id="ci"><polygon points="3,12 24,19 51,21 81,12 99,2 120,30 165,27 180,39 183,84 186,135 174,171 141,168 111,170 81,183 36,192 33,159 9,129 6,96 15,69 24,54 12,36"/></clipPath></defs>
+      <g clip-path="url(#ci)"><rect width="64" height="200" fill="#F77F00"/><rect x="64" width="63" height="200" fill="#fff"/><rect x="127" width="63" height="200" fill="#009E60"/></g>
+      <polygon points="3,12 24,19 51,21 81,12 99,2 120,30 165,27 180,39 183,84 186,135 174,171 141,168 111,170 81,183 36,192 33,159 9,129 6,96 15,69 24,54 12,36" fill="none" stroke="#fff" stroke-width="3"/>
+      <circle cx="141" cy="164" r="7" fill="#d93a1f" stroke="#fff" stroke-width="2"/>
+    </svg>
+    <div>
+      <h1>NAVJ AI<br>SÉCURITÉ</h1>
+      <div class="mu">Côte d'Ivoire · Abidjan</div>
+      <div style="margin-top:6px">Mode : <b id="mode">Gratuit</b> <span id="badge" class="badge" hidden>Premium</span></div>
+      <div class="mu" id="quota"></div>
+    </div>
+    <svg viewBox="0 0 200 200" aria-label="Globe terrestre">
+      <defs>
+        <clipPath id="gl"><circle cx="100" cy="100" r="96"/></clipPath>
+        <radialGradient id="mer" cx=".35" cy=".3"><stop offset="0" stop-color="#3aa0e8"/><stop offset="1" stop-color="#0b3d6b"/></radialGradient>
+        <radialGradient id="om" cx=".4" cy=".35" r=".7"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+        <g id="co" fill="#3fbf7a"><path d="M20 30 50 25 60 50 45 80 55 110 45 150 35 130 30 90Z"/><path d="M95 40 125 35 135 70 125 110 110 140 100 110 90 70Z"/><path d="M140 35 185 30 195 65 170 85 150 70Z"/><path d="M165 125 190 122 192 142 170 145Z"/></g>
+      </defs>
+      <circle cx="100" cy="100" r="96" fill="url(#mer)"/>
+      <g clip-path="url(#gl)"><g class="terre"><use href="#co"/><use href="#co" x="200"/><use href="#co" x="400"/></g>
+        <g fill="none" stroke="#fff" stroke-opacity=".25"><ellipse cx="100" cy="100" rx="96" ry="30"/><ellipse cx="100" cy="100" rx="96" ry="64"/><line x1="4" y1="100" x2="196" y2="100"/></g></g>
+      <circle cx="100" cy="100" r="96" fill="url(#om)"/>
+      <circle cx="100" cy="100" r="96" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>
+    </svg>
+  </div>
+  <div id="plateau" style="margin-top:8px">
+    <svg viewBox="0 0 400 80" style="width:100%;display:block" aria-label="Le Plateau, Abidjan">
+      <circle cx="320" cy="30" r="22" fill="#F77F00" opacity=".85"/>
+      <g fill="#04100a">
+        <rect x="0" y="70" width="400" height="10"/>
+        <rect x="14" y="40" width="22" height="31"/><rect x="40" y="26" width="18" height="45"/>
+        <polygon points="68,71 100,22 132,71"/><polygon points="80,71 100,40 120,71" fill="#0d2a1c"/>
+        <rect x="140" y="12" width="16" height="59"/><rect x="160" y="34" width="26" height="37"/>
+        <rect x="194" y="6" width="20" height="65"/><rect x="218" y="30" width="18" height="41"/>
+        <rect x="244" y="45" width="30" height="26"/><polygon points="288,71 288,38 296,10 304,38 304,71"/>
+        <rect x="312" y="28" width="22" height="43"/><rect x="340" y="18" width="18" height="53"/><rect x="362" y="40" width="26" height="31"/>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<main>
+<section class="sec on" id="t-rapport">
+  <div class="c">
+    <h2>Nouveau rapport</h2>
+    <input id="agent" placeholder="Nom de l'agent" value="N'ké Junior">
+    <select id="soc">
+      <option value="">Choisis ton entreprise / site</option>
+      <option selected>SGCI Total Treichville</option><option>Shell</option><option>Résidence</option><option value="autre">Autre (écrire le nom)</option>
+    </select>
+    <input id="autre" placeholder="Nom de l'entreprise / du site" hidden>
+    <select id="ronde"><option>Ronde RAS</option><option>Ronde avec incident</option><option>Ronde de nuit</option></select>
+    <textarea id="faits" rows="4" placeholder="Décris les faits...">Ronde RAS</textarea>
+    <div class="vocal">
+      <b style="color:var(--vt)">🎤 Rapport vocal (audio + texte)</b>
+      <div class="l"><button class="vt" id="bStart" type="button">🎤 Parler</button><button class="rg" id="bStop" type="button" hidden>⏹ Arrêter</button></div>
+      <p class="mu" id="vs" aria-live="polite">Appuie sur Parler et décris les faits.</p>
+      <audio id="lec" controls style="width:100%" hidden></audio>
+      <button class="gr" id="bAud" type="button" hidden>⬇ Télécharger l'audio</button>
+    </div>
+    <label class="mu" style="display:block;margin-top:10px"><input type="checkbox" id="gps" style="width:auto;margin:0 6px 0 0"> Ajouter ma position GPS</label>
+    <button class="vt" id="bGen">Générer le rapport</button>
+  </div>
+  <div class="c">
+    <h2>Rapport</h2>
+    <div id="rapport">Aucun rapport pour l'instant.</div>
+    <button class="gr" id="bCop">📋 Copier</button>
+    <select id="dest"><option value="resp">Envoyer à : Responsable de Sécurité</option><option value="bur">Envoyer à : Bureau Sécurité</option></select>
+    <details class="mu" style="margin-top:8px"><summary>📞 Mes numéros WhatsApp</summary>
+      <input id="nResp" type="tel" placeholder="N° Responsable de Sécurité (ex : 0707070707)">
+      <input id="nBur" type="tel" placeholder="N° Bureau Sécurité (ex : 0505050505)">
+      <button class="gr" id="bNum">Enregistrer les numéros</button>
+    </details>
+    <button class="vt" id="bWA">📲 Envoyer par WhatsApp</button>
+    <button class="or" id="bPDF">📄 PDF preuve (Premium)</button>
+  </div>
+  <div class="c"><h2>Historique</h2><div id="histo" class="mu">Aucun rapport enregistré.</div></div>
+</section>
+
+<section class="sec" id="t-outils">
+  <div class="c">
+    <h2>Horloge universelle</h2>
+    <div class="big" id="hAbj">--:--:--</div>
+    <div class="mu" id="dAbj" style="text-align:center">Abidjan</div>
+    <div id="mondes" style="margin-top:8px"></div>
+  </div>
+  <div class="c">
+    <h2>Chronomètre</h2>
+    <div class="big" id="chr">00:00:00.0</div>
+    <div class="l"><button class="vt" id="cGo">▶ Démarrer</button><button class="gr" id="cTour">⚑ Tour</button><button class="rg" id="cRaz">↺ Zéro</button></div>
+    <div id="tours" class="mu"></div>
+  </div>
+</section>
+
+<section class="sec" id="t-aide">
+  <div class="c"><h2>Assistance : utiliser l'application</h2>
+    <div class="log" id="aLog"></div><div class="ch" id="aCh"></div>
+    <input id="aIn" placeholder="Pose ta question..."><button class="vt" id="aGo">Envoyer</button></div>
+</section>
+
+<section class="sec" id="t-forma">
+  <div class="c"><h2>Formation sécurité privée et publique</h2>
+    <div class="log" id="fLog"></div><div class="ch" id="fCh"></div>
+    <input id="fIn" placeholder="Ex : comment devenir un agent professionnel ?"><button class="vt" id="fGo">Envoyer</button></div>
+</section>
+
+<section class="sec" id="t-prem">
+  <div class="c">
+    <h2>Premium à vie : 1000 F</h2>
+    <p class="mu" id="pInfo">Rapports illimités et PDF preuve.</p>
+    <div id="boxPrem">
+      <button class="or" id="bPay">1. Payer 1000 F par Wave</button>
+      <p class="mu">2. Envoie la capture du paiement à <b id="ct"></b>. Tu reçois ton code.</p>
+      <input id="code" placeholder="3. Colle ici ton code Premium" autocomplete="off">
+      <button class="vt" id="bAct">Activer Premium</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button class="on" data-t="rapport">📝<br>Rapport</button>
+  <button data-t="outils">⏱<br>Outils</button>
+  <button data-t="aide">💬<br>Aide</button>
+  <button data-t="forma">🎓<br>Formation</button>
+  <button data-t="prem">⭐<br>Premium</button>
+</nav>
+<div id="toast" role="status"></div>
+
+<script>
+const CONFIG={
+  fondateur:"PAPA DERA ELLE",contact:"@papaderaelle",
+  waveUrl:"https://pay.wave.com/m/M_ci_BsVtsF_0PH8q/c/ci/?amount=1000",
+  limiteGratuit:3,
+  codes:["NAVJ-0000"],
+  imagePlateau:""
+};
+const $=id=>document.getElementById(id);
+const lire=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const ecrire=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800)}
+$('ct').textContent=CONFIG.contact;
+if(CONFIG.imagePlateau)$('plateau').innerHTML=`<img src="${esc(CONFIG.imagePlateau)}" alt="Le Plateau, Abidjan" style="width:100%;border-radius:10px;display:block">`;
+
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id==='t-'+b.dataset.t));
+  scrollTo({top:0});
+});
+
+const estPrem=()=>CONFIG.codes.includes(String(lire('navj_code','')).toUpperCase());
+function majMode(){
+  const p=estPrem(),q=lire('navj_quota',{d:'',n:0}),auj=new Date().toDateString();
+  $('mode').textContent=p?'Premium':'Gratuit';$('badge').hidden=!p;$('boxPrem').hidden=p;
+  $('pInfo').textContent=p?'✅ Premium actif : rapports illimités et PDF preuve.':'Rapports illimités et PDF preuve.';
+  $('quota').textContent=p?'Rapports illimités':Math.max(0,CONFIG.limiteGratuit-(q.d===auj?q.n:0))+" rapport(s) gratuit(s) aujourd'hui";
+}
+$('bPay').onclick=()=>window.open(CONFIG.waveUrl,'_blank','noopener');
+$('bAct').onclick=()=>{const c=$('code').value.trim().toUpperCase();
+  if(CONFIG.codes.includes(c)){ecrire('navj_code',c);majMode();toast('Premium activé !')}else toast('Code invalide.')};
+
+$('soc').onchange=()=>{$('autre').hidden=$('soc').value!=='autre'};
+const societe=()=>$('soc').value==='autre'?$('autre').value.trim():$('soc').value;
+
+const nums=lire('navj_nums',{resp:'',bur:''});$('nResp').value=nums.resp;$('nBur').value=nums.bur;
+$('bNum').onclick=()=>{ecrire('navj_nums',{resp:$('nResp').value.trim(),bur:$('nBur').value.trim()});toast('Numéros enregistrés')};
+function intl(n){n=String(n).replace(/\D/g,'');if(n.length===10&&n[0]==='0')n='225'+n;return n.length>=11?n:''}
+
+let rec,flux,morc=[],blob=null,reco,tf='';
+$('bStart').onclick=async()=>{
+  if(!navigator.mediaDevices||!window.MediaRecorder){toast("Micro non disponible. Écris les faits.");return}
+  try{flux=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){$('vs').textContent="Micro refusé. Autorise le micro (lien https).";return}
+  morc=[];rec=new MediaRecorder(flux);rec.ondataavailable=e=>morc.push(e.data);
+  rec.onstop=()=>{blob=new Blob(morc,{type:rec.mimeType||'audio/webm'});$('lec').src=URL.createObjectURL(blob);$('lec').hidden=false;$('bAud').hidden=false;flux.getTracks().forEach(t=>t.stop());$('vs').textContent="✅ Audio enregistré. Vérifie le texte.";};
+  rec.start();
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  tf=($('faits').value&&$('faits').value!=='Ronde RAS')?$('faits').value+' ':'';
+  if(SR){reco=new SR();reco.lang='fr-FR';reco.interimResults=true;reco.continuous=true;
+    reco.onresult=ev=>{let p='';for(let i=ev.resultIndex;i<ev.results.length;i++){const t=ev.results[i][0].transcript;if(ev.results[i].isFinal)tf+=t+' ';else p+=t}$('faits').value=tf+p};
+    reco.onerror=()=>{};try{reco.start()}catch(e){}$('vs').textContent="🎧 J'écoute... parle maintenant.";
+  }else $('vs').textContent="🎧 Audio en cours (pas de texte automatique ici).";
+  $('bStart').hidden=true;$('bStop').hidden=false;
+};
+$('bStop').onclick=()=>{if(rec&&rec.state!=='inactive')rec.stop();if(reco)try{reco.stop()}catch(e){}$('bStart').hidden=false;$('bStop').hidden=true};
+$('bAud').onclick=()=>{if(!blob)return;const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(dernier?dernier.id:'NAVJ-audio')+'.webm';a.click()};
+
+let dernier=null;
+const pos=()=>new Promise(r=>{if(!$('gps').checked||!navigator.geolocation)return r('');
+  navigator.geolocation.getCurrentPosition(p=>r(p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5)),()=>{toast('GPS indisponible');r('')},{timeout:8000})});
+$('bGen').onclick=async()=>{
+  const ag=$('agent').value.trim(),so=societe(),fa=$('faits').value.trim();
+  if(!ag){toast("Entre le nom de l'agent");return}
+  if(!so){toast("Choisis ou écris ton entreprise");return}
+  if(!fa){toast('Décris les faits');return}
+  const pr=estPrem(),auj=new Date().toDateString();
+  let q=lire('navj_quota',{d:auj,n:0});if(q.d!==auj)q={d:auj,n:0};
+  if(!pr&&q.n>=CONFIG.limiteGratuit){toast('Limite gratuite atteinte. Passe en Premium.');return}
+  const g=await pos(),now=new Date(),id='NAVJ-'+now.getTime().toString(36).toUpperCase().slice(-6);
+  const txt=`🏢 ${so.toUpperCase()}\nRAPPORT DE RONDE - NAVJ AI SÉCURITÉ\n\nID : ${id}\nAgent : ${ag}\nType : ${$('ronde').value}\nDate : ${now.toLocaleString('fr-FR')}${g?'\nPosition : '+g:''}${blob?'\nAudio : joint ('+id+'.webm)':''}\n\nFAITS :\n${fa}\n\nFondé par ${CONFIG.fondateur} ${CONFIG.contact}`;
+  dernier={id,txt,date:now.toISOString()};$('rapport').textContent=txt;
+  if(!pr){q.n++;ecrire('navj_quota',q)}
+  const h=lire('navj_histo',[]);h.unshift(dernier);ecrire('navj_histo',h.slice(0,30));
+  majMode();histo();toast('Rapport généré et enregistré');
+};
+$('bCop').onclick=async()=>{if(!dernier){toast("Génère d'abord un rapport");return}try{await navigator.clipboard.writeText(dernier.txt);toast('Copié !')}catch(e){toast('Copie impossible ici')}};
+$('bWA').onclick=()=>{
+  if(!dernier){toast("Génère d'abord un rapport");return}
+  const n=intl(lire('navj_nums',{resp:'',bur:''})[$('dest').value]);
+  if(!n){toast("Enregistre d'abord ce numéro dans « Mes numéros WhatsApp »");return}
+  window.open('https://wa.me/'+n+'?text='+encodeURIComponent(dernier.txt),'_blank','noopener');
+};
+$('bPDF').onclick=()=>{
+  if(!estPrem()){toast('Le PDF preuve est réservé au Premium');return}
+  if(!dernier){toast("Génère d'abord un rapport");return}
+  const w=window.open('','_blank');if(!w){toast('Autorise les pop-up');return}
+  w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${dernier.id}</title><style>body{font-family:sans-serif;padding:32px;max-width:700px;margin:auto}h1{font-size:20px;border-bottom:3px solid #F77F00;padding-bottom:8px}pre{white-space:pre-wrap;font:15px/1.5 sans-serif}footer{margin-top:30px;font-size:12px;color:#555}</style></head><body><h1>NAVJ AI SÉCURITÉ</h1><pre>${esc(dernier.txt)}</pre><footer>Généré le ${new Date().toLocaleString('fr-FR')} - ID ${dernier.id}</footer><script>onload=()=>print()<\/script></body></html>`);
+  w.document.close();
+};
+function histo(){
+  const h=lire('navj_histo',[]),b=$('histo');if(!h.length){b.textContent='Aucun rapport enregistré.';return}
+  b.innerHTML='';h.forEach(r=>{const l=document.createElement('div');l.className='h';
+    l.innerHTML=`<span>${esc(r.id)}<br><span class="mu">${new Date(r.date).toLocaleString('fr-FR')}</span></span>`;
+    const x=document.createElement('button');x.className='gr';x.textContent='Ouvrir';
+    x.onclick=()=>{dernier=r;$('rapport').textContent=r.txt;scrollTo({top:0,behavior:'smooth'})};l.appendChild(x);b.appendChild(l)});
+}
+
+const VILLES=[["Paris","Europe/Paris"],["Londres","Europe/London"],["New York","America/New_York"],["Dubaï","Asia/Dubai"],["Pékin","Asia/Shanghai"],["Tokyo","Asia/Tokyo"]];
+const hm=(z,s)=>new Date().toLocaleTimeString('fr-FR',{timeZone:z,hour:'2-digit',minute:'2-digit',...(s?{second:'2-digit'}:{})});
+function tic(){
+  $('hAbj').textContent=hm('Africa/Abidjan',1);
+  $('dAbj').textContent='Abidjan · '+new Date().toLocaleDateString('fr-FR',{timeZone:'Africa/Abidjan',weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $('mondes').innerHTML=VILLES.map(v=>`<div class="cl"><span>${v[0]}</span><b>${hm(v[1],1)}</b></div>`).join('');
+}
+setInterval(tic,1000);tic();
+
+let t0=0,acc=0,run=false,iv,nT=0;
+const fmt=ms=>{const s=ms/1000,h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=(s%60).toFixed(1).padStart(4,'0');return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+x};
+const cur=()=>acc+(run?performance.now()-t0:0);
+$('cGo').onclick=()=>{if(run){acc=cur();run=false;clearInterval(iv);$('cGo').textContent='▶ Reprendre'}else{t0=performance.now();run=true;iv=setInterval(()=>$('chr').textContent=fmt(cur()),100);$('cGo').textContent='⏸ Pause'}};
+$('cTour').onclick=()=>{if(!cur())return;nT++;$('tours').insertAdjacentHTML('afterbegin',`<div class="cl"><span>Tour ${nT}</span><b>${fmt(cur())}</b></div>`)};
+$('cRaz').onclick=()=>{run=false;clearInterval(iv);acc=0;nT=0;$('chr').textContent='00:00:00.0';$('tours').innerHTML='';$('cGo').textContent='▶ Démarrer'};
+
+const AIDE=[
+ {k:["rapport","générer","creer","créer","faire"],r:"Onglet Rapport : écris ton nom, choisis ton entreprise, le type de ronde, décris les faits, puis appuie sur « Générer le rapport »."},
+ {k:["vocal","micro","parler","voix","audio"],r:"Appuie sur « Parler », autorise le micro et décris les faits : ils s'écrivent tout seuls. Le micro marche seulement avec un lien https. L'audio se télécharge avec le bouton prévu."},
+ {k:["whatsapp","envoyer","numéro","numero","responsable","bureau"],r:"Ouvre « Mes numéros WhatsApp », écris le numéro du Responsable de Sécurité et du Bureau Sécurité, enregistre. Choisis ensuite le destinataire et appuie sur « Envoyer par WhatsApp »."},
+ {k:["premium","code","payer","paiement","wave","activer"],r:"Onglet Premium : paie 1000 F par Wave, envoie la capture au fondateur, colle le code reçu et appuie sur « Activer Premium »."},
+ {k:["pdf","preuve","imprimer"],r:"Le PDF preuve est réservé au Premium. Génère un rapport, puis appuie sur « PDF preuve » et choisis « Enregistrer au format PDF »."},
+ {k:["gps","position","lieu"],r:"Coche « Ajouter ma position GPS » avant de générer le rapport et accepte la localisation."},
+ {k:["gratuit","limite","quota"],r:"Le mode gratuit permet 3 rapports par jour. Le Premium est illimité."},
+ {k:["historique","ancien","retrouver"],r:"Tes 30 derniers rapports sont en bas de l'onglet Rapport. Appuie sur « Ouvrir » pour en revoir un."},
+ {k:["chrono","chronomètre","chronometre","tour"],r:"Onglet Outils : « Démarrer » lance le chronomètre, « Tour » note un passage, « Zéro » remet à zéro. Pratique pour chronométrer une ronde."},
+ {k:["horloge","heure","monde","fuseau"],r:"Onglet Outils : l'heure d'Abidjan est en grand, avec Paris, Londres, New York, Dubaï, Pékin et Tokyo en dessous."},
+ {k:["entreprise","site","société","societe","boîte","boite"],r:"Choisis ton entreprise dans la liste du rapport. Si elle n'y est pas, choisis « Autre » et écris son nom : il s'affichera en tête du rapport."},
+ {k:["urgence","secours","samu","pompiers","police","relève","releve","malaise","stress"],r:"Onglet Urgence : boutons d'appel direct (SAMU 185, pompiers 180, police secours). Onglet Santé : conseils si tu es stressé, épuisé ou malade, avec un bouton pour demander ta relève."},
+ {k:["passation","incident","checklist","archive","archives","service"],r:"Onglet Service : passation de service, rapport d'incident, checklist de ronde et archives avec sauvegarde. Tes documents restent sur ton téléphone."}
+];
+const FORMA=[
+ {k:["professionnel","devenir","carrière","carriere","conseil","astuce"],r:"Pour devenir un agent professionnel : ponctualité, tenue propre, calme, sens de l'observation, rapports honnêtes et complets. Forme-toi sans cesse (secourisme, incendie) et écoute tes responsables."},
+ {k:["privée","privee","gardiennage","public","publique","différence","difference"],r:"La sécurité privée protège des personnes et des biens pour un client (entreprise, site, résidence). La sécurité publique relève de l'État (police, gendarmerie). L'agent privé observe, dissuade et alerte : il ne remplace pas les forces de l'ordre."},
+ {k:["ronde","patrouille"],r:"Pendant la ronde : suis un parcours précis, vérifie portes, clôtures, éclairage et issues, note l'heure de chaque passage, change parfois de rythme et signale tout changement."},
+ {k:["incident","alerte","urgence"],r:"En cas d'incident : 1) protège-toi, 2) alerte ton responsable et les secours, 3) sécurise la zone, 4) note les faits précis (heure, lieu, personnes), 5) rédige le rapport sans exagérer."},
+ {k:["incendie","feu"],r:"Incendie : donne l'alerte, évacue calmement, ferme les portes, utilise l'extincteur seulement si le feu est petit et ta sortie dégagée. Connais l'emplacement des extincteurs et des issues."},
+ {k:["secours","blessé","blesse","premiers"],r:"Premiers secours : sécurise la zone, appelle les secours, ne déplace pas un blessé grave sans nécessité, arrête un saignement en appuyant dessus. Le détail est dans l'onglet Santé. Suis une formation de secourisme (SST)."},
+ {k:["accès","acces","contrôle","controle","visiteur"],r:"Contrôle d'accès : salue, demande le motif et l'identité, vérifie l'autorisation, note l'entrée et la sortie. Sois poli mais ferme : pas d'autorisation, pas d'accès."},
+ {k:["conflit","calme","agressif","dispute"],r:"Face à une personne agressive : reste calme, parle doucement, garde de la distance, écoute, n'insulte jamais. Si cela monte, appelle du renfort."},
+ {k:["éthique","ethique","déontologie","deontologie","responsable","honnête"],r:"Un agent responsable est honnête, discret, incorruptible et respecte la loi et les personnes. Il ne divulgue pas les informations du site et ne dort jamais en poste."},
+ {k:["tenue","attitude","image"],r:"Ta tenue et ton attitude sont ta carte de visite : uniforme propre, badge visible, posture droite, langage correct, téléphone rangé pendant le service."},
+ {k:["loi","légal","legal","réglementation","reglementation"],r:"La sécurité privée est encadrée par la loi. Renseigne-toi auprès de ton employeur sur l'agrément, tes droits et tes limites en Côte d'Ivoire : ne dépasse jamais ton rôle."}
+];
+function assistant(p,base,accueil,chips){
+  const log=$(p+'Log'),inp=$(p+'In');
+  const add=(t,c)=>{const d=document.createElement('div');d.className='m '+c;d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight};
+  const rep=q=>{q=q.toLowerCase();let b=null,s=0;base.forEach(e=>{const n=e.k.filter(w=>q.includes(w)).length;if(n>s){s=n;b=e}});
+    return b?b.r:"Je n'ai pas la réponse exacte. Essaie avec un mot-clé : "+base.slice(0,5).map(e=>e.k[0]).join(', ')+"."};
+  const go=q=>{q=q.trim();if(!q)return;add(q,'mo');add(rep(q),'ia');inp.value=''};
+  $(p+'Go').onclick=()=>go(inp.value);inp.onkeydown=e=>{if(e.key==='Enter')go(inp.value)};
+  chips.forEach(c=>{const b=document.createElement('button');b.textContent=c;b.onclick=()=>go(c);$(p+'Ch').appendChild(b)});
+  add(accueil,'ia');
+}
+assistant('a',AIDE,"Bonjour ! Je t'aide à utiliser l'application. Choisis une question ou écris la tienne.",["Comment faire un rapport ?","Comment envoyer par WhatsApp ?","Comment activer Premium ?","Comment utiliser le micro ?","Le chronomètre"]);
+assistant('f',FORMA,"Bienvenue en formation. Pose une question sur la sécurité privée ou publique, ou choisis un thème.",["Devenir un agent professionnel","Sécurité privée et publique","Faire une bonne ronde","Que faire en cas d'incident ?","Contrôle d'accès","Gérer un conflit"]);
+
+majMode();histo();
+</script>
+<script>
+(function(){
+const css=document.createElement('style');
+css.textContent='nav{overflow-x:auto}nav button{flex:0 0 auto;min-width:66px}nav button.urg{color:#ff6b57;font-weight:800}.appel{display:block;text-align:center;padding:14px;border-radius:12px;background:#d93a1f;color:#fff;text-decoration:none;font-weight:800;margin-top:8px}.appel.s{background:#1c3329}.appel small{display:block;font-weight:400;opacity:.85}details.p{border-top:1px solid rgba(255,255,255,.1);padding:8px 0}details.p summary{font-weight:700;cursor:pointer}details.p p{margin:8px 0 0;font-size:14px;line-height:1.5}.avert{background:#3a2a05;border:1px solid #F77F00;border-radius:10px;padding:10px;font-size:13px;margin-top:8px}';
+document.head.appendChild(css);
+const tel=(n,t,note,c)=>`<a class="appel ${c||''}" href="tel:${n}">📞 ${n} · ${t}<small>${note}</small></a>`;
+const G='Gratuit selon la liste Orange CI';
+const URG=[['185','SAMU : urgence médicale',G],['180','Sapeurs-pompiers : incendie, accident, secours',G],['110','Police secours',G],['111','Police secours',G],['170','Police secours (cité aussi pour la gendarmerie : à confirmer)',G],['199','Défense nationale',G]];
+const AUT=[['179',"CIE : panne d'électricité",'Payant (environ 103 F selon Orange)'],['175','SODECI : eau','Payant (environ 103 F selon Orange)'],['139','Écoute psychologique','Non vérifié : confirme avec ton employeur']];
+const PS=[
+['Arrêt cardiaque (ne répond pas, ne respire pas ou respire mal)',"Appelle le 185 ou fais-le appeler, et demande un défibrillateur (DAE) s'il y en a un. Allonge la personne sur le dos, sur une surface dure. Mains superposées au centre de la poitrine, bras tendus : appuie fort et vite, environ 5 à 6 cm, 100 à 120 fois par minute. Continue jusqu'à l'arrivée des secours. Si un DAE arrive, allume-le et suis ses instructions vocales."],
+['Hémorragie',"Appuie fort et directement sur la plaie avec un tissu propre, sans relâcher. Si le tissu se remplit, ajoute-en un autre par-dessus sans retirer le premier. Allonge la personne et appelle le 185. Ne retire pas un objet planté dans la plaie."],
+['Étouffement (adulte qui ne peut ni parler ni respirer)',"S'il peut tousser, encourage-le à tousser. Sinon : 5 claques fortes dans le dos entre les omoplates, puis 5 compressions abdominales (derrière lui, poing au-dessus du nombril, tire vers toi et vers le haut). Alterne. S'il perd connaissance, appelle le 185 et commence le massage cardiaque. Pour un bébé ou un enfant, la technique est différente : il faut une formation."],
+['Brûlure',"Refroidis tout de suite à l'eau courante tempérée pendant au moins 10 minutes. Retire bijoux et vêtements non collés. Ne perce pas les cloques, n'applique ni beurre, ni pâte, ni huile. Couvre avec un linge propre. Brûlure étendue, au visage ou grave : 185."],
+['Malaise ou évanouissement',"Conscient : allonge-le, jambes surélevées, desserre les vêtements, donne de l'air. Inconscient mais il respire : position latérale de sécurité (sur le côté, tête légèrement en arrière) et appelle le 185. Surveille sa respiration."],
+['AVC (visage qui tombe, bras sans force, parole confuse)',"Appelle le 185 tout de suite et note l'heure du début des signes. Ne donne ni à boire, ni à manger, ni médicament."],
+['Convulsions',"Écarte les objets dangereux, protège la tête, ne mets rien dans la bouche, ne le retiens pas. Note la durée. Ensuite, position latérale de sécurité. Appelle le 185 si cela dure plus de 5 minutes, si c'est la première fois, en cas de blessure ou de difficulté à respirer."],
+['Chute, fracture, choc violent',"Ne déplace pas la personne (risque pour la tête, le cou, le dos). Immobilise le membre blessé, couvre-la et appelle le 185. Ne remets jamais un os en place."],
+['Coup de chaleur',"Mets la personne à l'ombre, retire les vêtements en trop, refroidis-la (eau, linges mouillés, ventilation). Donne de l'eau à petites gorgées si elle est consciente. Confusion ou perte de connaissance : 185."],
+['Morsure de serpent',"Garde la personne calme et immobile, immobilise le membre, retire bagues et bracelets. N'incise pas, ne suce pas, ne pose pas de garrot. Appelle le 185 ou va vite à l'hôpital."]];
+const ET={stress:['😰 Stressé ou paniqué',"Assieds-toi si possible. Respire par le nez 4 secondes, souffle lentement par la bouche 6 secondes, pendant 2 minutes. Nomme 5 choses que tu vois, 4 que tu touches, 3 que tu entends. Bois un peu d'eau. Si ça continue, préviens ton superviseur. Douleur dans la poitrine, difficulté à respirer ou impression de t'évanouir : appelle le 185.",'stress ou panique'],
+fatigue:['😴 Épuisé',"Ne dors jamais à ton poste. Marche un peu, lave-toi le visage, bois de l'eau, change de position. Si tu n'arrives plus à rester vigilant, demande ta relève : un agent épuisé est un risque pour lui-même et pour le site.",'épuisement'],
+malaise:['🤕 Malaise ou vertiges',"Assieds-toi ou allonge-toi tout de suite, jambes surélevées si possible. Bois de l'eau à petites gorgées et préviens quelqu'un. Si ça ne passe pas en quelques minutes, ou en cas de douleur à la poitrine, faiblesse d'un côté du corps ou confusion : 185.",'malaise'],
+malade:['🤒 Malade',"Signale-le à ton responsable, demande ta relève et va dans un centre de santé. Ne reste pas en poste si tu es trop mal. Fièvre forte avec confusion, raideur de la nuque ou difficulté à respirer : 185.",'maladie']};
+document.querySelector('main').insertAdjacentHTML('beforeend',`
+<section class="sec" id="t-urg"><div class="c"><h2>🚨 Urgences Côte d'Ivoire</h2>
+<div class="avert">Danger vital : appelle d'abord, utilise l'application après. Dis qui tu es, où tu es, ce qui se passe et combien de personnes sont touchées.</div>
+${URG.map(u=>tel(u[0],u[1],u[2])).join('')}
+<p class="mu">Source : liste officielle Orange Côte d'Ivoire. Je ne peux pas garantir la gratuité chez tous les opérateurs ni sans crédit. Ajoute aussi les numéros de ton site et de ta société.</p></div>
+<div class="c"><h2>Autres numéros</h2>${AUT.map(u=>tel(u[0],u[1],u[2],'s')).join('')}</div></section>
+<section class="sec" id="t-sante"><div class="c"><h2>Comment te sens-tu ?</h2>
+<div class="ch" id="etBtn">${Object.keys(ET).map(k=>`<button data-k="${k}">${ET[k][0]}</button>`).join('')}</div>
+<div id="etRep" class="mu" style="margin-top:10px">Choisis ce que tu ressens pour recevoir des conseils.</div></div>
+<div class="c"><h2>🩹 Premiers secours</h2>
+<div class="avert">Guide d'orientation basé sur des recommandations courantes de premiers secours. Il ne remplace ni une formation, ni un avis médical. Il n'a pas encore été validé par un médecin.</div>
+${PS.map(p=>`<details class="p"><summary>${p[0]}</summary><p>${p[1]}</p></details>`).join('')}
+${tel('185','Appeler le SAMU','Gratuit selon la liste Orange CI')}</div></section>`);
+const nav=document.querySelector('nav');
+nav.insertAdjacentHTML('beforeend','<button data-t="urg" class="urg">🚨<br>Urgence</button><button data-t="sante">🩺<br>Santé</button>');
+function aller(id){nav.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.t===id));document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id==='t-'+id));scrollTo({top:0})}
+nav.querySelectorAll('[data-t=urg],[data-t=sante]').forEach(b=>b.onclick=()=>aller(b.dataset.t));
+function releve(motif){
+  const n=intl(lire('navj_nums',{resp:'',bur:''}).resp);
+  if(!n){toast("Enregistre d'abord le numéro du Responsable (Rapport, Mes numéros WhatsApp)");return}
+  const txt=`DEMANDE DE RELÈVE\nAgent : ${$('agent').value.trim()}\nSite : ${societe()}\nHeure : ${new Date().toLocaleString('fr-FR')}\nMotif : ${motif}\nJe ne peux plus assurer mon poste en sécurité. Merci d'envoyer une relève.`;
+  window.open('https://wa.me/'+n+'?text='+encodeURIComponent(txt),'_blank','noopener');
+}
+$('etBtn').onclick=e=>{
+  const k=e.target.dataset.k;if(!k)return;
+  $('etRep').innerHTML=`<p>${ET[k][1]}</p><button class="rg" id="bRel">Préparer ma demande de relève (WhatsApp)</button><a class="appel" href="tel:185">📞 185 · SAMU</a>`;
+  $('bRel').onclick=()=>releve(ET[k][2]);
+};
+const F={securite:'sécurité',societe:'société',incidant:'incident',probleme:'problème',numero:'numéro',vehicule:'véhicule',apres:'après',deja:'déjà',tres:'très',reunion:'réunion',entree:'entrée',ras:'RAS',interieur:'intérieur',exterieur:'extérieur',cloture:'clôture',degats:'dégâts',batiment:'bâtiment',proces:'procès'};
+function corriger(t){
+  let r=t.replace(/\s+/g,' ').replace(/\s+([,.;:!?])/g,'$1').trim();
+  r=r.replace(/\ba ete\b/gi,'a été').replace(/\brien a signaler\b/gi,'rien à signaler');
+  r=r.replace(/[\p{L}]+/gu,w=>F[w.toLowerCase()]||w);
+  r=r.replace(/(^|[.!?]\s+)(\p{Ll})/gu,(m,a,b)=>a+b.toUpperCase());
+  if(/[\p{L}\d]$/u.test(r))r+='.';
+  return r;
+}
+$('faits').insertAdjacentHTML('afterend','<button class="gr" id="bCorr" type="button">✨ Corriger le texte (hors ligne)</button><p class="mu" style="margin:4px 0 0">Corrige l\'orthographe courante et la mise en forme. Il ne change jamais les faits : relis toujours.</p>');
+$('bCorr').onclick=()=>{const f=$('faits'),a=f.value,b=corriger(a);if(a===b){toast('Rien à corriger');return}f.value=b;toast('Texte corrigé. Relis avant de générer.')};
+})();
+</script>
+<script>
+(function(){
+const K='navj_svc',LS={brouillon:'Brouillon',en_attente:'En attente de réception',reserves:'Réceptionnée avec réserves',validee:'Validée par le destinataire',enregistre:'Enregistré'};
+const st=document.createElement('style');
+st.textContent='.st{border-radius:20px;padding:2px 9px;font-size:11px;font-weight:800;background:#445;color:#fff}.st.en_attente{background:#b36b00}.st.validee{background:#009E60}.st.reserves{background:#c0392b}.lab{display:block;margin-top:10px;font-size:13px;color:#9db3a6}.avt{background:#3a2a05;border:1px solid #F77F00;border-radius:10px;padding:10px;font-size:13px;margin-top:8px}.ap{display:block;text-align:center;padding:12px;border-radius:12px;background:#d93a1f;color:#fff;text-decoration:none;font-weight:800;margin-top:8px}.ck{border-top:1px solid rgba(255,255,255,.1);padding:8px 0}';
+document.head.appendChild(st);
+const now=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+const PF=[['type','Type de passation','sel',['Agent vers agent','Agent vers chef de poste','Agent vers superviseur','Agent vers direction','Responsable vers responsable']],['de','Transmetteur : nom complet','txt'],['defn','Transmetteur : fonction','txt'],['a','Destinataire : nom complet','txt'],['afn','Destinataire : fonction','txt'],['site','Société et site','txt'],['dt','Date et heure','dt'],['poste','Poste ou zone','txt'],['equip','Équipements remis (clés, radio, téléphone pro, registre, badge, autres)','area'],['etat','État des équipements','sel',['Bon état','Usé','Endommagé','Manquant (à préciser)']],['sit','Situation du poste','area'],['cons','Consignes en cours','area'],['inc','Incidents et anomalies observés','area'],['todo','Actions restant à effectuer','area'],['obsT','Observations du transmetteur','area']];
+const IF=[['cls','Classement','sel',['Information','Anomalie','Incident','Urgent']],['lieu','Lieu','txt'],['dt','Date et heure','dt'],['faits','Faits observés','area'],['mes','Mesures prises','area'],['info','Personnes informées','txt'],['suite','Suite à donner','area'],['pj','Pièces justificatives disponibles','txt']];
+const TY={passation:{F:PF,t:'RAPPORT DE PASSATION DE SERVICE',p:'PAS',req:['de','a','site','poste','sit']},incident:{F:IF,t:"RAPPORT D'INCIDENT OU D'ANOMALIE",p:'INC',req:['lieu','faits']}};
+let CKL=lire('navj_ckl',['Contrôle des accès','Portes et points sensibles','Équipements','Anomalies observées','Matériel','Transmission des consignes','État général du poste']);
+let cour=null;
+const get=()=>lire(K,[]),put=a=>ecrire(K,a);
+const fld=(p,f)=>`<label class="lab" for="${p}_${f[0]}">${f[1]}</label>`+(f[2]==='sel'?`<select id="${p}_${f[0]}">${f[3].map(o=>`<option>${o}</option>`).join('')}</select>`:f[2]==='area'?`<textarea id="${p}_${f[0]}" rows="2"></textarea>`:`<input id="${p}_${f[0]}" type="${f[2]==='dt'?'datetime-local':'text'}">`);
+document.querySelector('main').insertAdjacentHTML('beforeend',`<section class="sec" id="t-svc">
+<div class="c"><h2>📋 Service</h2><div class="ch" id="svT"></div></div>
+<div id="v-passation" class="c"><h2>Passation de service</h2><div class="avt">La confirmation du destinataire se fait sur cet appareil. Ce n'est pas une signature électronique certifiée.</div>${PF.map(f=>fld('p',f)).join('')}<button class="gr" id="pBr">💾 Enregistrer comme brouillon</button><button class="vt" id="pEn">📤 Enregistrer : en attente de réception</button></div>
+<div id="v-incident" class="c" hidden><h2>Incident ou anomalie</h2><div class="avt">Suis les procédures de ton entreprise. En cas de danger immédiat, appelle d'abord les secours. Rien n'est envoyé automatiquement.</div><div id="iUrg" hidden><a class="ap" href="tel:185">📞 185 · SAMU</a><a class="ap" href="tel:180">📞 180 · Pompiers</a><a class="ap" href="tel:110">📞 110 · Police secours</a></div>${IF.map(f=>fld('i',f)).join('')}<button class="vt" id="iEn">Enregistrer</button></div>
+<div id="v-ronde" class="c" hidden><h2>Checklist de ronde ou prise de poste</h2><div class="avt">Une checklist numérique ne prouve pas qu'une ronde physique a été faite : elle note seulement ce que tu déclares.</div><label class="lab" for="ckSite">Site ou poste</label><input id="ckSite"><div id="ckRows"></div><input id="ckNew" placeholder="Ajouter un point à contrôler"><button class="gr" id="ckAdd">+ Ajouter ce point</button><button class="vt" id="ckSave">Enregistrer la checklist</button></div>
+<div id="v-archives" class="c" hidden><h2>Archives</h2><select id="arT"><option value="tous">Tous les documents</option><option value="passation">Passations</option><option value="incident">Incidents</option><option value="ronde">Checklists de ronde</option></select><input id="arQ" placeholder="Rechercher (date, agent, site, mot...)"><div id="arL"></div><div class="l"><button class="gr" id="bkS">💾 Sauvegarder</button><button class="gr" onclick="document.getElementById('bkR').click()">📂 Restaurer</button></div><input id="bkR" type="file" accept=".json" hidden><div class="avt">Tes documents sont gardés uniquement sur ce téléphone. Ils disparaissent si tu effaces les données du navigateur ou changes d'appareil : fais des sauvegardes. Aucune sauvegarde en ligne n'existe.</div></div>
+<div id="v-doc" class="c" hidden></div></section>`);
+const nav=document.querySelector('nav');
+nav.insertAdjacentHTML('beforeend','<button data-t="svc">📋<br>Service</button>');
+nav.querySelector('[data-t=svc]').onclick=()=>{nav.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.t==='svc'));document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id==='t-svc'));scrollTo({top:0})};
+const VW=['passation','incident','ronde','archives','doc'];
+function show(v){VW.forEach(x=>$('v-'+x).hidden=x!==v);if(v==='archives')arch();scrollTo({top:0})}
+[['passation','🔄 Passation'],['incident','⚠️ Incident'],['ronde','✅ Ronde'],['archives','🗂 Archives']].forEach(c=>{const b=document.createElement('button');b.textContent=c[1];b.onclick=()=>{cour=null;show(c[0])};$('svT').appendChild(b)});
+$('p_dt').value=now();$('i_dt').value=now();$('p_site').value=societe();$('ckSite').value=societe();
+$('i_cls').onchange=()=>{$('iUrg').hidden=!['Incident','Urgent'].includes($('i_cls').value)};
+const col=(p,F)=>Object.fromEntries(F.map(f=>[f[0],$(p+'_'+f[0]).value.trim()]));
+const fmtD=v=>v?new Date(v).toLocaleString('fr-FR'):'';
+function txt(r){const L=TY[r.type]?TY[r.type].F:r.F;return `🏢 ${(r.soc||'').toUpperCase()}\n${r.titre} - NAVJ AI SÉCURITÉ\n\nN° : ${r.id}\nStatut : ${LS[r.statut]}\n\n`+L.map(f=>`${f[1]} : ${(f[2]==='dt'?fmtD(r.d[f[0]]):r.d[f[0]])||'Non renseigné'}`).join('\n')+(r.recep?`\n\nRÉCEPTION : ${r.recep}`:'')+"\n\nDocument généré par l'application, sans signature électronique certifiée."}
+function sauver(type,statut){
+  const T=TY[type],p=type==='passation'?'p':'i',d=col(p,T.F);
+  if(statut!=='brouillon'){const m=T.req.filter(k=>!d[k]);if(m.length){toast('Champ obligatoire : '+T.F.find(f=>f[0]===m[0])[1]);return}}
+  const a=get();let r=cour&&cour.type===type?a.find(x=>x.id===cour.id):null;
+  if(r){r.d=d;r.statut=statut}else{r={id:T.p+'-'+Date.now().toString(36).toUpperCase().slice(-6),type,titre:T.t,statut,date:new Date().toISOString(),soc:societe(),d};a.unshift(r)}
+  put(a);cour=null;toast('Enregistré sur cet appareil : '+LS[statut]);ouvrir(r.id);
+}
+$('pBr').onclick=()=>sauver('passation','brouillon');
+$('pEn').onclick=()=>sauver('passation','en_attente');
+$('iEn').onclick=()=>sauver('incident','enregistre');
+function ckR(){$('ckRows').innerHTML=CKL.map((c,i)=>`<div class="ck"><b>${esc(c)}</b><select id="ck${i}"><option>Non vérifié</option><option>Conforme</option><option>Non conforme</option></select><input id="ko${i}" placeholder="Observation"></div>`).join('')}
+ckR();
+$('ckAdd').onclick=()=>{const x=$('ckNew').value.trim();if(!x)return;const sv=CKL.map((_,i)=>[$('ck'+i).value,$('ko'+i).value]);CKL.push(x);ecrire('navj_ckl',CKL);ckR();sv.forEach((v,i)=>{$('ck'+i).value=v[0];$('ko'+i).value=v[1]});$('ckNew').value=''};
+$('ckSave').onclick=()=>{
+  if(!$('ckSite').value.trim()){toast('Indique le site ou le poste');return}
+  const F=[['site','Site ou poste','txt'],['dt','Date et heure','dt'],...CKL.map((c,i)=>['c'+i,c,'txt'])];
+  const d={site:$('ckSite').value.trim(),dt:now()};
+  CKL.forEach((c,i)=>{const o=$('ko'+i).value.trim();d['c'+i]=$('ck'+i).value+(o?' - '+o:'')});
+  const r={id:'RON-'+Date.now().toString(36).toUpperCase().slice(-6),type:'ronde',titre:'CHECKLIST DE RONDE',statut:'enregistre',date:new Date().toISOString(),soc:societe(),d,F};
+  const a=get();a.unshift(r);put(a);toast('Checklist enregistrée sur cet appareil');ouvrir(r.id);
+};
+function arch(){
+  const t=$('arT').value,q=$('arQ').value.toLowerCase();
+  const a=get().filter(r=>(t==='tous'||r.type===t)&&(!q||txt(r).toLowerCase().includes(q)));
+  $('arL').innerHTML=a.length?a.map(r=>`<div class="h"><span>${esc(r.id)} <span class="st ${r.statut}">${LS[r.statut]}</span><br><span class="mu">${new Date(r.date).toLocaleString('fr-FR')} · ${esc(r.titre)}</span></span><span><button class="gr" data-o="${r.id}">Ouvrir</button> <button class="rg" data-x="${r.id}">✕</button></span></div>`).join(''):'<p class="mu">Aucun document.</p>';
+}
+$('arT').onchange=arch;$('arQ').oninput=arch;
+$('arL').onclick=e=>{const o=e.target.dataset.o,x=e.target.dataset.x;if(o)ouvrir(o);if(x&&confirm('Supprimer ce document définitivement ?')){put(get().filter(r=>r.id!==x));arch();toast('Document supprimé')}};
+$('bkS').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({svc:get(),histo:lire('navj_histo',[])})],{type:'application/json'}));a.download='navj-sauvegarde.json';a.click();toast('Fichier de sauvegarde créé : garde-le en lieu sûr')};
+$('bkR').onchange=e=>{const f=e.target.files[0];if(!f||!confirm('Remplacer les données actuelles par la sauvegarde ?'))return;const rd=new FileReader();rd.onload=()=>{try{const o=JSON.parse(rd.result);if(!Array.isArray(o.svc))throw 0;put(o.svc);if(Array.isArray(o.histo))ecrire('navj_histo',o.histo);arch();toast('Sauvegarde restaurée')}catch(x){toast('Fichier invalide')}};rd.readAsText(f)};
+function ouvrir(id){
+  const r=get().find(x=>x.id===id);if(!r)return;
+  const edit=(r.type==='passation'||r.type==='incident')&&r.statut!=='validee';
+  $('v-doc').dataset.id=id;
+  $('v-doc').innerHTML=`<h2>${esc(r.id)} <span class="st ${r.statut}">${LS[r.statut]}</span></h2><div style="background:#fff;color:#111;padding:12px;border-radius:10px;white-space:pre-wrap;font-size:14px">${esc(txt(r))}</div>`
+  +(r.type==='passation'&&r.statut==='en_attente'?`<div class="avt">Réception par le destinataire, sur cet appareil</div><input id="rNom" placeholder="Nom complet du destinataire"><textarea id="rObs" rows="2" placeholder="Observations ou réserves"></textarea><label class="lab"><input type="checkbox" id="rOk" style="width:auto"> Je confirme avoir reçu le poste et les équipements décrits.</label><button class="vt" data-a="val">✅ Confirmer la réception</button><button class="rg" data-a="res">⚠ Signaler une réserve</button>`:'')
+  +`<input id="wNum" type="tel" placeholder="Numéro WhatsApp du destinataire" value="${esc(lire('navj_nums',{}).resp||'')}"><button class="vt" data-a="wa">📲 Préparer WhatsApp</button>`+(edit?'<button class="gr" data-a="mod">✏️ Modifier</button>':'')+'<button class="gr" data-a="exp">⬇ Exporter (.txt)</button><button class="gr" data-a="imp">🖨 Imprimer ou PDF</button><button class="gr" data-a="ret">← Retour aux archives</button>';
+  show('doc');
+}
+function maj(r,s,nom,obs){const A=get(),x=A.find(y=>y.id===r.id);x.statut=s;x.recep=`${nom} le ${new Date().toLocaleString('fr-FR')}${obs?' : '+obs:' (sans réserve)'}`;put(A);ouvrir(x.id)}
+$('v-doc').onclick=e=>{
+  const a=e.target.dataset.a;if(!a)return;
+  const r=get().find(x=>x.id===$('v-doc').dataset.id);if(!r)return;
+  if(a==='ret')return show('archives');
+  if(a==='mod'){cour=r;const p=r.type==='passation'?'p':'i';TY[r.type].F.forEach(f=>$(p+'_'+f[0]).value=r.d[f[0]]||'');show(r.type);return}
+  if(a==='exp'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([txt(r)],{type:'text/plain;charset=utf-8'}));l.download=r.id+'.txt';l.click();toast('Fichier texte créé');return}
+  if(a==='imp'){const w=window.open('','_blank');if(!w){toast('Autorise les pop-up');return}w.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${esc(r.id)}</title><style>body{font-family:sans-serif;padding:32px;max-width:700px;margin:auto}pre{white-space:pre-wrap;font:15px/1.5 sans-serif}</style></head><body><pre>${esc(txt(r))}</pre><script>onload=()=>print()<\/script></body></html>`);w.document.close();return}
+  if(a==='wa'){const n=intl($('wNum').value);if(!n){toast('Numéro invalide');return}if(!confirm('Ouvrir WhatsApp vers +'+n+' avec ce document ? Vérifie bien le destinataire.'))return;window.open('https://wa.me/'+n+'?text='+encodeURIComponent(txt(r)),'_blank','noopener');toast("WhatsApp ouvert : c'est à toi de confirmer l'envoi");return}
+  if(a==='val'||a==='res'){
+    const nom=$('rNom').value.trim(),obs=$('rObs').value.trim();
+    if(nom.toLowerCase()!==String(r.d.a).toLowerCase()){toast('Le nom doit être celui du destinataire : '+r.d.a);return}
+    if(a==='val'){if(!$('rOk').checked){toast('Coche la confirmation de réception');return}maj(r,'validee',nom,obs);toast('Réception confirmée par le destinataire')}
+    else{if(!obs){toast('Écris la réserve dans les observations');return}maj(r,'reserves',nom,obs);toast('Réserve enregistrée')}
+  }
+};
+})();
+</script>
+</body>
+</html>
